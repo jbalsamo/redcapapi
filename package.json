@@ -1,0 +1,25 @@
+{
+  "name": "redcapapi",
+  "version": "1.0.0",
+  "description": "Proxy api to access local redcap server.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "redcap",
+    "data",
+    "import"
+  ],
+  "author": "jbalsamo",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.1",
+    "config-json": "^1.0.0",
+    "express": "^4.13.4",
+    "http": "0.0.0",
+    "https": "^1.0.0",
+    "needle": "^1.0.0",
+    "request": "^2.72.0"
+  }
+}
