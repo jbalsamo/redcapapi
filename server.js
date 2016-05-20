@@ -47,6 +47,43 @@ router.get('/booya/:username', function (req, res) {
     res.json({message: 'Booya! ' + req.params.username + ' is awesome!'});
 });
 
+router.get('/export/:content/:forms', function (req, res) {
+    console.log("In Export");
+    var options = {
+        method: 'POST',
+        url: config.get("redcap", "url"),
+        headers: {'content-type': 'application/x-www-form-urlencoded'},
+        form: {
+            token: config.get("redcap", "token"),
+            content: req.params.content,
+            format: 'json',
+            returnFormat: 'json'
+        }
+    };
+    if (typeof req.params.forms !== 'undefined') {
+        options.form.forms = req.params.forms;
+    }
+    if(req.params.content == "records") {
+        options.form.type = "flat";
+        options.form.rawOrLabel =  "raw";
+        options.form.rawOrLabelHeaders =  "raw";
+        options.form.exportCheckboxLabel =  "false";
+        options.form.exportSurveyFields =  "false";
+        options.form.exportDataAccessGroups =  "false";
+    }
+    console.log(options);
+    request(options,
+        function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                console.log("Successfully read data");
+                res.json(JSON.parse(body));
+            } else {
+                console.log(response.statusCode)
+            }
+        }
+    );
+});
+
 router.get('/export/:content', function (req, res) {
     console.log("In Export");
     var options = {
@@ -60,33 +97,15 @@ router.get('/export/:content', function (req, res) {
             returnFormat: 'json'
         }
     };
-    console.log("In Export: ready to send request");
-    request(options,
-        function (error, response, body) {
-            if (!error && response.statusCode == 200) {
-                console.log("Successfully read data");
-                res.json(JSON.parse(body));
-            } else {
-                console.log(response.statusCode)
-            }
-        }
-    );
-});
-
-router.get('/export/:content/:form', function (req, res) {
-    console.log("In Export");
-    var options = {
-        method: 'POST',
-        url: config.get("redcap", "url"),
-        headers: {'content-type': 'application/x-www-form-urlencoded'},
-        form: {
-            token: config.get("redcap", "token"),
-            content: req.params.content,
-            format: 'json',
-            returnFormat: 'json'
-        }
-    };
-    console.log("In Export: ready to send request");
+    if(req.params.content == "records") {
+        options.form.type = "flat";
+        options.form.rawOrLabel =  "raw";
+        options.form.rawOrLabelHeaders =  "raw";
+        options.form.exportCheckboxLabel =  "false";
+        options.form.exportSurveyFields =  "false";
+        options.form.exportDataAccessGroups =  "false";
+    }
+    console.log("Content only request");
     request(options,
         function (error, response, body) {
             if (!error && response.statusCode == 200) {
