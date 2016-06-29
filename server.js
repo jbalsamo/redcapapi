@@ -1,7 +1,7 @@
 /**
+ * name: RedCapAPI
  * Created by jbalsamo on 5/14/16.
  */
-// server.js
 
 // BASE SETUP
 // =============================================================================
@@ -48,9 +48,12 @@ router.get('/booya/:username', function (req, res) {
 });
 
 router.get('/:content/:forms', function (req, res) {
+    var rdata ={};
+
     if (debug) {
         console.log("In Export");
     }
+
     var options = {
         method: 'POST',
         url: config.get("redcap", "url"),
@@ -129,6 +132,41 @@ router.get('/:content', function (req, res) {
         }
     );
 });
+
+router.post('/:content', function (req,res) {
+    data = [];
+    data.push(req.body.data);
+    var options = {
+        method: 'POST',
+        url: config.get("redcap", "url"),
+        headers: {'content-type': 'application/x-www-form-urlencoded'},
+        form: {
+            token: config.get("redcap", "token"),
+            content: req.params.content,
+            format: 'json',
+            returnFormat: 'json',
+            overwriteBehavior: 'normal',
+            returnContent: 'count',
+            data: JSON.stringify(data)
+        }
+    };
+    if (req.body.action == "insert") {
+        request(options,
+            function (error, response, body) {
+                if (!error && response.statusCode == 200) {
+                    if (debug) {
+                        console.log("Successfully read data");
+                    }
+                    console.log(body);
+                    res.json(JSON.parse(body));
+                } else {
+                    res.json({ error: response.statusCode, body: body});
+                    console.log(body)
+                }
+            }
+        );
+    }
+})
 
 
 // REGISTER OUR ROUTES -------------------------------
