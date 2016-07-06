@@ -150,7 +150,7 @@ router.post('/:content', function (req,res) {
             data: JSON.stringify(data)
         }
     };
-    if (req.body.action == "insert") {
+    if (req.body.action == "import") {
         request(options,
             function (error, response, body) {
                 if (!error && response.statusCode == 200) {
